@@ -1,3 +1,4 @@
+/* eslint-disable no-console */
 // Licensed to the Software Freedom Conservancy (SFC) under one
 // or more contributor license agreements.  See the NOTICE file
 // distributed with this work for additional information
@@ -69,27 +70,16 @@ function tryOverrideControl(req) {
     ModalState.hideWelcome()
   }
   WindowSession.focusIDEWindow()
-  return ModalState.showAlert({
-    title: 'Assisted Control',
-    description: `${req.name} is trying to control Selenium IDE`,
-    confirmLabel: 'Restart and Allow access',
-    cancelLabel: 'Deny access',
-  }).then(r => {
-    if (r) {
-      const plugin = {
-        id: req.sender,
-        name: req.name,
-        version: req.version,
-        commands: req.commands,
-        dependencies: req.dependencies,
-        jest: req.jest,
-        exports: req.exports,
-      }
-      return browser.runtime.sendMessage({ restart: true, controller: plugin })
-    } else {
-      return Promise.reject()
-    }
-  })
+  const plugin = {
+    id: req.sender,
+    name: req.name,
+    version: req.version,
+    commands: req.commands,
+    dependencies: req.dependencies,
+    jest: req.jest,
+    exports: req.exports,
+  }
+  return browser.runtime.sendMessage({ restart: false, controller: plugin })
 }
 
 router.get('/health', (req, res) => {
@@ -194,28 +184,11 @@ router.post('/project', (req, res) => {
     if (!plugin) return res(errors.missingPlugin)
     if (!req.project) return res(errors.missingProject)
 
-    if (!UiState.isSaved()) {
-      WindowSession.focusIDEWindow()
-      ModalState.showAlert({
-        title: 'Open project without saving',
-        description: `${
-          plugin.name
-        } is trying to load a project, are you sure you want to load this project and lose all unsaved changes?`,
-        confirmLabel: 'proceed',
-        cancelLabel: 'cancel',
-      }).then(result => {
-        if (result) {
-          loadJSProject(UiState.project, req.project)
-          ModalState.completeWelcome()
-          res(true)
-        }
-      })
-    } else {
-      WindowSession.focusIDEWindow()
-      loadJSProject(UiState.project, req.project)
-      ModalState.completeWelcome()
-      res(true)
-    }
+    WindowSession.focusIDEWindow()
+    loadJSProject(UiState.project, req.project)
+    ModalState.completeWelcome()
+
+    res(true)
     res(false)
   })
 })
