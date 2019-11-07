@@ -70,12 +70,6 @@ export function loadAsText(blob) {
   })
 }
 
-export function saveProject(_project) {
-  const project = _project.toJS()
-  downloadProject(project)
-  UiState.saved()
-}
-
 function sendSaveProjectEvent(project) {
   const saveMessage = {
     action: 'event',
@@ -85,6 +79,12 @@ function sendSaveProjectEvent(project) {
     },
   }
   browser.runtime.sendMessage(Manager.controller.id, saveMessage)
+}
+
+export function saveProject(_project) {
+  const project = _project.toJS()
+  downloadProject(project)
+  UiState.saved()
 }
 
 function downloadProject(project) {
@@ -137,13 +137,26 @@ function exportProject(project) {
   })
 }
 
-export function downloadUniqueFile(filename, body, mimeType = 'text/plain') {
-  browser.downloads.download({
-    filename,
-    url: createBlob(mimeType, body),
-    saveAs: true,
-    conflictAction: 'overwrite',
-  })
+function sendMessageInsteadOfFile(filename, body) {
+  const saveMessage = {
+    filename: filename,
+    body: body,
+  }
+  browser.runtime.sendMessage(Manager.controller.id, saveMessage)
+}
+
+export function downloadUniqueFile(filename, body) {
+  if (UiState.isControlled) {
+    //If in control mode, send the file in a message and skip downloading
+    sendMessageInsteadOfFile(filename, body)
+  } else {
+    browser.downloads.download({
+      filename,
+      url: createBlob('text/plain', body),
+      saveAs: true,
+      conflictAction: 'overwrite',
+    })
+  }
 }
 
 let previousFile = null
