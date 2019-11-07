@@ -27,8 +27,6 @@ import { modifier } from 'modifier-keys'
 import Tooltip from '../../components/Tooltip'
 import storage from '../../IO/storage'
 import ProjectStore from '../../stores/domain/ProjectStore'
-import seed from '../../stores/seed'
-import SuiteDropzone from '../../components/SuiteDropzone'
 import PauseBanner from '../../components/PauseBanner'
 import ProjectHeader from '../../components/ProjectHeader'
 import Navigation from '../Navigation'
@@ -63,11 +61,8 @@ const project = observable(new ProjectStore(''))
 
 UiState.setProject(project)
 
-if (isProduction) {
-  createDefaultSuite(project, { suite: '', test: '' })
-} else {
-  seed(project)
-}
+createDefaultSuite(project, { suite: '', test: '' })
+
 project.setModified(false)
 
 function createDefaultSuite(
@@ -281,70 +276,62 @@ export default class Panel extends React.Component {
   render() {
     return (
       <div className="container" onKeyDown={this.handleKeyDownAlt.bind(this)}>
-        <SuiteDropzone
-          loadProject={loadProject.bind(undefined, this.state.project)}
+        <SplitPane
+          split="horizontal"
+          minSize={UiState.minContentHeight}
+          maxSize={UiState.maxContentHeight}
+          size={UiState.windowHeight - UiState.consoleHeight}
+          onChange={size => UiState.resizeConsole(window.innerHeight - size)}
+          style={{
+            position: 'initial',
+          }}
         >
-          <SplitPane
-            split="horizontal"
-            minSize={UiState.minContentHeight}
-            maxSize={UiState.maxContentHeight}
-            size={UiState.windowHeight - UiState.consoleHeight}
-            onChange={size => UiState.resizeConsole(window.innerHeight - size)}
-            style={{
-              position: 'initial',
-            }}
-          >
-            <div className="wrapper">
-              <PauseBanner />
-              <ProjectHeader
-                title={this.state.project.name}
-                changed={this.state.project.modified}
-                changeName={this.state.project.changeName}
-                openFile={openFile => {
-                  this.openFile = openFile
-                }}
-                load={loadProject.bind(undefined, this.state.project)}
-                save={() => saveProject(this.state.project)}
-                new={this.loadNewProject.bind(this)}
-              />
-              <div
-                className={classNames('content', {
-                  dragging: UiState.navigationDragging,
-                })}
-              >
-                <SplitPane
-                  split="vertical"
-                  minSize={UiState.minNavigationWidth}
-                  maxSize={UiState.maxNavigationWidth}
-                  size={UiState.navigationWidth}
-                  onChange={UiState.resizeNavigation}
-                >
-                  <Navigation
-                    tests={UiState.filteredTests}
-                    suites={this.state.project.suites}
-                    duplicateTest={this.state.project.duplicateTestCase}
-                  />
-                  <Editor
-                    url={this.state.project.url}
-                    urls={this.state.project.urls}
-                    setUrl={this.state.project.setUrl}
-                    test={UiState.displayedTest}
-                    callstackIndex={UiState.selectedTest.stack}
-                  />
-                </SplitPane>
-              </div>
-            </div>
-            <Console
-              height={UiState.consoleHeight}
-              restoreSize={UiState.restoreConsoleSize}
+          <div className="wrapper">
+            <PauseBanner />
+            <ProjectHeader
+              title={this.state.project.name}
+              changed={this.state.project.modified}
+              changeName={this.state.project.changeName}
+              save={() => saveProject(this.state.project)}
+              new={this.loadNewProject.bind(this)}
             />
-          </SplitPane>
-          <Modal
-            project={this.state.project}
-            createNewProject={this.createNewProject.bind(this)}
+            <div
+              className={classNames('content', {
+                dragging: UiState.navigationDragging,
+              })}
+            >
+              <SplitPane
+                split="vertical"
+                minSize={UiState.minNavigationWidth}
+                maxSize={UiState.maxNavigationWidth}
+                size={UiState.navigationWidth}
+                onChange={UiState.resizeNavigation}
+              >
+                <Navigation
+                  tests={UiState.filteredTests}
+                  suites={this.state.project.suites}
+                  duplicateTest={this.state.project.duplicateTestCase}
+                />
+                <Editor
+                  url={this.state.project.url}
+                  urls={this.state.project.urls}
+                  setUrl={this.state.project.setUrl}
+                  test={UiState.displayedTest}
+                  callstackIndex={UiState.selectedTest.stack}
+                />
+              </SplitPane>
+            </div>
+          </div>
+          <Console
+            height={UiState.consoleHeight}
+            restoreSize={UiState.restoreConsoleSize}
           />
-          <Tooltip />
-        </SuiteDropzone>
+        </SplitPane>
+        <Modal
+          project={this.state.project}
+          createNewProject={this.createNewProject.bind(this)}
+        />
+        <Tooltip />
       </div>
     )
   }

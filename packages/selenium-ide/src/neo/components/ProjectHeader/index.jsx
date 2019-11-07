@@ -73,10 +73,6 @@ export default class ProjectHeader extends React.Component {
         </div>
         <span className="buttons">
           <NewButton onClick={this.props.new} />
-          <OpenButton
-            onFileSelected={this.props.load}
-            openFile={this.props.openFile}
-          />
           <SaveButton
             data-place="left"
             unsaved={this.props.changed}
