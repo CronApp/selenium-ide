@@ -102,11 +102,19 @@ function beforeEach() {
         },
         {
           level: 1,
-          statement: gridUrl
-            ? `driver = new RemoteWebDriver(new URL("${gridUrl}"), DesiredCapabilities.${
-                browserName ? browserName.toLowerCase() : 'chrome'
-              }());`
-            : `driver = new ${browserName ? browserName : 'Chrome'}Driver();`,
+          statement: `ChromeOptions chromeOptions = new ChromeOptions()`,
+        },
+        {
+          level: 1,
+          statement: `chromeOptions.addArguments("--headless");`,
+        },
+        {
+          level: 1,
+          statement: `chromeOptions.addArguments("--no-sandbox");`,
+        },
+        {
+          level: 1,
+          statement: `driver = new ChromeDriver(chromeOptions);`,
         },
         { level: 1, statement: 'js = (JavascriptExecutor) driver;' },
         { level: 1, statement: 'vars = new HashMap<String, Object>();' },
@@ -141,11 +149,7 @@ function declareDependencies() {
         },
         {
           level: 0,
-          statement: 'import org.openqa.selenium.remote.RemoteWebDriver;',
-        },
-        {
-          level: 0,
-          statement: 'import org.openqa.selenium.remote.DesiredCapabilities;',
+          statement: 'import org.openqa.selenium.chrome.ChromeOptions;',
         },
         { level: 0, statement: 'import org.openqa.selenium.Dimension;' },
         { level: 0, statement: 'import org.openqa.selenium.WebElement;' },
