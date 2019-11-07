@@ -97,9 +97,19 @@ function beforeEach() {
         { level: 0, statement: 'public void setUp() {' },
         {
           level: 1,
-          statement: `driver = new ${
-            userAgent.browserName ? userAgent.browserName : 'Chrome'
-          }Driver();`,
+          statement: `ChromeOptions chromeOptions = new ChromeOptions()`,
+        },
+        {
+          level: 1,
+          statement: `chromeOptions.addArguments("--headless");`,
+        },
+        {
+          level: 1,
+          statement: `chromeOptions.addArguments("--no-sandbox");`,
+        },
+        {
+          level: 1,
+          statement: `driver = new ChromeDriver(chromeOptions);`,
         },
         { level: 1, statement: 'js = (JavascriptExecutor) driver;' },
         { level: 1, statement: 'vars = new HashMap<String, Object>();' },
@@ -131,6 +141,10 @@ function declareDependencies() {
         {
           level: 0,
           statement: 'import org.openqa.selenium.chrome.ChromeDriver;',
+        },
+        {
+          level: 0,
+          statement: 'import org.openqa.selenium.chrome.ChromeOptions;',
         },
         { level: 0, statement: 'import org.openqa.selenium.Dimension;' },
         { level: 0, statement: 'import org.openqa.selenium.WebElement;' },
