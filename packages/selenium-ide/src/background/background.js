@@ -184,45 +184,42 @@ browser.runtime.onConnect.addListener(function(m) {
 browser.runtime.onMessage.addListener(handleInternalMessage)
 
 function handleInternalMessage(message) {
-  if (message.restart && message.controller && message.controller.id) {
+  if (message.controller && message.controller.id) {
     ideWindowId = undefined
+    var payload = { ...message }
 
+    const newMessage = {
+      uri: '/private/connect',
+      verb: 'post',
+      payload: payload,
+    }
     browser.runtime
-      .sendMessage({
-        uri: '/private/close',
-        verb: 'post',
-        payload: null,
-      })
-      .then(() => {
-        openPanel({ windowId: 0 }).then(() => {
-          var payload = { ...message }
-          delete payload.restart
-
-          const newMessage = {
-            uri: '/private/connect',
-            verb: 'post',
-            payload: payload,
-          }
-          browser.runtime
-            .sendMessage(newMessage)
-            .then(
-              browser.runtime.sendMessage(message.controller.id, {
-                connected: true,
-              })
-            )
-            .catch(() => {
-              browser.runtime.sendMessage(
-                message.controller.id,
-                'Error Connecting to Selenium IDE'
-              )
-            })
+      .sendMessage(newMessage)
+      .then(
+        browser.runtime.sendMessage(message.controller.id, {
+          connected: true,
         })
+      )
+      .catch(() => {
+        browser.runtime.sendMessage(
+          message.controller.id,
+          'Error Connecting to Selenium IDE'
+        )
       })
   }
 }
 
 browser.runtime.onMessageExternal.addListener(
   (message, sender, sendResponse) => {
+    if (message === 'version') {
+      const manifest = browser.runtime.getManifest()
+      sendResponse({
+        type: 'success',
+        version: manifest.version,
+      })
+      return
+    }
+
     if (!message.payload) {
       message.payload = {}
     }
