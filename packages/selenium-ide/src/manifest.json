@@ -34,7 +34,8 @@
   "externally_connectable": {
     "ids": [
       "*"
-    ]
+    ],
+    "matches": ["*://localhost/*", "*://cronapp.io/*"]
   },
   "web_accessible_resources": [
     "icons/icon128.png",
@@ -48,9 +49,7 @@
   "content_security_policy": "script-src 'self' 'sha256-W7QWmGne6B9hjKtOqoGmUFOPgpFcUo4Nr/yyMqtgXcU=' 'sha256-4cgtnhJWZr038A2+gTGcUgQL2QsJao6c0AiTxYYo6c8=' 'unsafe-eval'; object-src 'self'",
   "content_scripts": [
     {
-      "matches": [
-        "<all_urls>"
-      ],
+      "matches": ["*://localhost/*", "*://cronapp.io/*"],
       "js": [
         "assets/vendor/global.js",
         "assets/vendor/selenium-browserdetect.js",
