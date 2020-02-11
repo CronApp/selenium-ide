@@ -102,7 +102,7 @@ function beforeEach() {
         },
         {
           level: 1,
-          statement: `ChromeOptions chromeOptions = new ChromeOptions()`,
+          statement: `ChromeOptions chromeOptions = new ChromeOptions();`,
         },
         {
           level: 1,
