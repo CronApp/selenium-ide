@@ -1,3 +1,4 @@
+/* eslint-disable no-console */
 /*
  * Copyright 2017 SideeX committers
  *
@@ -181,31 +182,19 @@ browser.runtime.onConnect.addListener(function(m) {
   port = m
 })
 
+let sendMessageToContentScript = payload => {
+  chrome.tabs.query({ active: true, currentWindow: false }, tabs => {
+    chrome.tabs.sendMessage(tabs[0].id, payload, response => {
+      console.log(response)
+    })
+  })
+}
+
 browser.runtime.onMessage.addListener(handleInternalMessage)
 
 function handleInternalMessage(message) {
-  if (message.controller && message.controller.id) {
-    ideWindowId = undefined
-    var payload = { ...message }
-
-    const newMessage = {
-      uri: '/private/connect',
-      verb: 'post',
-      payload: payload,
-    }
-    browser.runtime
-      .sendMessage(newMessage)
-      .then(
-        browser.runtime.sendMessage(message.controller.id, {
-          connected: true,
-        })
-      )
-      .catch(() => {
-        browser.runtime.sendMessage(
-          message.controller.id,
-          'Error Connecting to Selenium IDE'
-        )
-      })
+  if (message.event === 'saveProject' || (message.filename && message.body)) {
+    sendMessageToContentScript(message)
   }
 }
 

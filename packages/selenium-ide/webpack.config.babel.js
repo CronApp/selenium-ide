@@ -296,6 +296,7 @@ module.exports = {
       { from: 'content/bootstrap.html', to: '../' },
       { from: 'content/indicator.html', to: '../' },
       { from: 'content/indicator.js', to: './' },
+      { from: 'content/cronappCommands.js', to: './' },
       { from: 'manifest.json', to: '../' },
       { from: 'icons', to: '../icons' },
     ]),

@@ -78,7 +78,7 @@ function sendSaveProjectEvent(project) {
       project,
     },
   }
-  browser.runtime.sendMessage(Manager.controller.id, saveMessage)
+  browser.runtime.sendMessage(saveMessage)
 }
 
 export function saveProject(_project) {
@@ -93,20 +93,8 @@ function downloadProject(project) {
       project.snapshot = snapshot
       Object.assign(project, Manager.emitDependencies())
     }
-    if (UiState.isControlled) {
-      //If in control mode, send the project in a message and skip downloading
-      sendSaveProjectEvent(project)
-    } else {
-      browser.downloads.download({
-        filename: sanitizeProjectName(project.name) + '.side',
-        url: createBlob(
-          'application/json',
-          beautify(JSON.stringify(project), { indent_size: 2 })
-        ),
-        saveAs: true,
-        conflictAction: 'overwrite',
-      })
-    }
+    //If in control mode, send the project in a message and skip downloading
+    sendSaveProjectEvent(project)
   })
 }
 
@@ -142,21 +130,11 @@ function sendMessageInsteadOfFile(filename, body) {
     filename: filename,
     body: body,
   }
-  browser.runtime.sendMessage(Manager.controller.id, saveMessage)
+  browser.runtime.sendMessage(saveMessage)
 }
 
 export function downloadUniqueFile(filename, body) {
-  if (UiState.isControlled) {
-    //If in control mode, send the file in a message and skip downloading
-    sendMessageInsteadOfFile(filename, body)
-  } else {
-    browser.downloads.download({
-      filename,
-      url: createBlob('text/plain', body),
-      saveAs: true,
-      conflictAction: 'overwrite',
-    })
-  }
+  sendMessageInsteadOfFile(filename, body)
 }
 
 let previousFile = null

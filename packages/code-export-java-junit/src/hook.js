@@ -97,7 +97,7 @@ function beforeEach() {
         { level: 0, statement: 'public void setUp() {' },
         {
           level: 1,
-          statement: `ChromeOptions chromeOptions = new ChromeOptions()`,
+          statement: `ChromeOptions chromeOptions = new ChromeOptions();`,
         },
         {
           level: 1,
