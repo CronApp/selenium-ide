@@ -35,6 +35,7 @@ module.exports = {
     record: ['./content/record'],
     escape: ['./content/escape'],
     neo: ['react-hot-loader/patch', './neo/containers/Root'],
+    cronappCommands : ['./content/cronappCommands']
   },
   output: {
     path: path.resolve(__dirname, 'build/assets'),
@@ -296,7 +297,6 @@ module.exports = {
       { from: 'content/bootstrap.html', to: '../' },
       { from: 'content/indicator.html', to: '../' },
       { from: 'content/indicator.js', to: './' },
-      { from: 'content/cronappCommands.js', to: './' },
       { from: 'manifest.json', to: '../' },
       { from: 'icons', to: '../icons' },
     ]),

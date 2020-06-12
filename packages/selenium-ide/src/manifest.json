@@ -29,8 +29,7 @@
     "notifications",
     "storage",
     "debugger",
-    "*://localhost/*",
-    "*://*.cronapp.io/*"
+    "<all_urls>"
   ],
   "externally_connectable": {
     "ids": [
@@ -51,8 +50,7 @@
   "content_scripts": [
     {
       "matches": [
-        "*://localhost/*",
-        "*://*.cronapp.io/*"
+        "<all_urls>"
       ],
       "js": [
         "assets/vendor/global.js",

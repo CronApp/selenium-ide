@@ -189,7 +189,6 @@ router.post('/project', (req, res) => {
     ModalState.completeWelcome()
 
     res(true)
-    res(false)
   })
 })
 

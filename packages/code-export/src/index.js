@@ -16,7 +16,7 @@
 // under the License.
 
 export const availableLanguages = {
-  'java-junit': require('code-export-java-junit'),
+  'java-junit': require('../../code-export-java-junit'),
 }
 
 function registerCommand(language, command, emitter) {
